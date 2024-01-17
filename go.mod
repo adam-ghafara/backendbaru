@@ -4,7 +4,6 @@ go 1.21.3
 
 require (
 	aidanwoods.dev/go-paseto v1.5.1
-	github.com/SISTEMKEAMANAN3C/siskem v0.0.0-20240102052603-eb971799b839
 	github.com/aiteung/atdb v0.1.5
 	go.mongodb.org/mongo-driver v1.13.1
 	golang.org/x/crypto v0.18.0
