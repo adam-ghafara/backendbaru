@@ -59,7 +59,7 @@ type Response struct {
 
 type FormInput struct {
 	NIK        string       `json:"nik" bson:"nik"`
-	Akademis   []Akademis   `json:"akademis" bson:"akademis"`
+	Akademis   Akademis     `json:"akademis" bson:"akademis"`
 	Sertifikat []Sertifikat `json:"sertifikat" bson:"sertifikat"`
 	SuratKerja []SuratKerja `json:"suratkerja" bson:"suratkerja"`
 	Status     bool         `json:"status" bson:"status"`
