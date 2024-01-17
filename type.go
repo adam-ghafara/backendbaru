@@ -59,8 +59,8 @@ type Response struct {
 
 type FormInput struct {
 	NIK        string       `json:"nik" bson:"nik"`
-	Akademis   Akademis     `json:"akademis" bson:"akademis"`
-	Sertifikat []Sertifikat `json:"sertificate" bson:"sertificate"`
+	Akademis   []Akademis   `json:"akademis" bson:"akademis"`
+	Sertifikat []Sertifikat `json:"sertifikat" bson:"sertifikat"`
 	SuratKerja []SuratKerja `json:"suratkerja" bson:"suratkerja"`
 	Status     bool         `json:"status" bson:"status"`
 }
@@ -68,7 +68,7 @@ type FormInput struct {
 type Akademis struct {
 	Nama_Dosen        string `json:"nama_dosen" bson:"nama_dosen"`
 	Pendidikan_Dosen  string `json:"pendidikan_dosen" bson:"pendidikan_dosen"`
-	Kuriulum_Dosen    string `json:"kuriulum_dosen" bson:"kuriulum_dosen"`
+	Kurikulum_Dosen   string `json:"kurikulum_dosen" bson:"kurikulum_dosen"`
 	Penelitian_Dosen  string `json:"penelitian_dosen" bson:"penelitian_dosen"`
 	Gelar_Dosen       string `json:"gelar_dosen" bson:"gelar_dosen"`
 	Lembaga_Dosen     string `json:"lembaga_dosen" bson:"lembaga_dosen"`
@@ -83,7 +83,7 @@ type Sertifikat struct {
 	Tujuan_Sertifikat             string `json:"tujuan_sertifikat" bson:"tujuan_sertifikat"`
 	Tanggal_Penerbitan_Sertifikat string `json:"tanggal_penerbitan_sertifikat" bson:"tanggal_penerbitan_sertifikat"`
 	Cap_Sertifikat                string `json:"cap_sertifikat" bson:"cap_sertifikat"`
-	Nomo_Sertifikat               string `json:"nomo_sertifikat" bson:"nomo_sertifikat"`
+	Nomor_Sertifikat              string `json:"nomor_sertifikat" bson:"nomor_sertifikat"`
 	Info_Sertifikat               string `json:"info_sertifikat" bson:"info_sertifikat"`
 	Logo_Sertifikat               string `json:"logo_sertifikat" bson:"logo_sertifikat"`
 }
