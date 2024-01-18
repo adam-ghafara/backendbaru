@@ -58,7 +58,7 @@ func TambahFormAPI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, peda.TambahForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
 }
-func DeleteAllform(w http.ResponseWriter, r *http.Request) {
+func HapusFormAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
@@ -71,7 +71,7 @@ func DeleteAllform(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, peda.HapusForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
 }
 
-func UpdateAllform(w http.ResponseWriter, r *http.Request) {
+func UpdateFormAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
@@ -116,8 +116,8 @@ func handlerRequests() {
 	http.HandleFunc("/LoginAPI", LoginAPI)
 
 	http.HandleFunc("/TambahFormAPI", TambahFormAPI)
-	http.HandleFunc("/DeleteAllform", DeleteAllform)
-	http.HandleFunc("/UpdateAllform", UpdateAllform)
+	http.HandleFunc("/HapusFormAPI", HapusFormAPI)
+	http.HandleFunc("/UpdateFormAPI", UpdateFormAPI)
 	http.HandleFunc("/GetAllform", GetAllform)
 	http.HandleFunc("/GetOneform", GetOneform)
 	log.Fatal(http.ListenAndServe(":8080", nil))
