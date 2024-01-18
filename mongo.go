@@ -61,8 +61,8 @@ func InsertForm(mconn *mongo.Database, collname string, dataform FormInput) inte
 	return atdb.InsertOneDoc(mconn, collname, dataform)
 }
 
-func GetAllForm(mongoconn *mongo.Database, collection string) FormInput {
-	dataform := atdb.GetAllDoc[FormInput](mongoconn, collection)
+func GetAllForm(mongoconn *mongo.Database, collection string) []FormInput {
+	dataform := atdb.GetAllDoc[[]FormInput](mongoconn, collection)
 	return dataform
 }
 

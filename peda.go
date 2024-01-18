@@ -187,6 +187,46 @@ func AmbilSemuaForm(publickey, mongoenv, dbname, collname string, r *http.Reques
 	return GCFReturnStruct(dataform)
 }
 
+func AmbilSatuForm(publickey, mongoenv, dbname, collname string, r *http.Request) string {
+	var response Pesan
+	response.Status = false
+	mconn := SetConnection(mongoenv, dbname)
+	var dataform FormInput
+	err := json.NewDecoder(r.Body).Decode(&dataform)
+
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return GCFReturnStruct(response)
+	}
+
+	header := r.Header.Get("token")
+	if header == "" {
+		response.Message = "Header login tidak ditemukan"
+		return GCFReturnStruct(response)
+	}
+
+	tokenusername := DecodeGetUsername(os.Getenv(publickey), header)
+	tokenrole := DecodeGetRole(os.Getenv(publickey), header)
+
+	if tokenusername == "" || tokenrole == "" {
+		response.Message = "Hasil decode tidak ditemukan"
+		return GCFReturnStruct(response)
+	}
+
+	if !UsernameExists(mongoenv, dbname, User{Username: tokenusername}) {
+		response.Message = "Akun tidak ditemukan"
+		return GCFReturnStruct(response)
+	}
+
+	if tokenrole != "admin" && tokenrole != "dosen" {
+		response.Message = "Anda tidak memiliki akses"
+		return GCFReturnStruct(response)
+	}
+
+	satuform := FindForm(mconn, collname, dataform)
+	return GCFReturnStruct(satuform)
+}
+
 func EditForm(publickey, mongoenv, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false

@@ -46,7 +46,7 @@ func LoginAPI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, peda.Login("privatekey", "mongoenv", "sistemkeamanan", "user", r))
 }
-func TambahFilmAPI(w http.ResponseWriter, r *http.Request) {
+func TambahFormAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
@@ -97,16 +97,29 @@ func GetAllform(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, peda.AmbilSemuaForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
 }
 
+func GetOneform(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	fmt.Fprintf(w, peda.AmbilSatuForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
+}
+
 func handlerRequests() {
 	http.HandleFunc("/AuthorizationAPI", AuthorizationAPI)
 	http.HandleFunc("/RegistrasiAPI", RegistrasiAPI)
 	http.HandleFunc("/LoginAPI", LoginAPI)
 
-	http.HandleFunc("/TambahFilmAPI", TambahFilmAPI)
+	http.HandleFunc("/TambahFormAPI", TambahFormAPI)
 	http.HandleFunc("/DeleteAllform", DeleteAllform)
 	http.HandleFunc("/UpdateAllform", UpdateAllform)
-	// http.HandleFunc("/GetAllformOne", GetAllformOne)
 	http.HandleFunc("/GetAllform", GetAllform)
+	http.HandleFunc("/GetOneform", GetOneform)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
