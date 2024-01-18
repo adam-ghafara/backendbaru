@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func Authorization(publickeykatalogkemanan, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func Authorization(publickey, mongoenv, dbname, collname string, r *http.Request) string {
 	var response CredentialUser
 	var auth User
 	response.Status = false
@@ -17,35 +17,35 @@ func Authorization(publickeykatalogkemanan, mongoenvkatalogfilm, dbname, collnam
 		return GCFReturnStruct(response)
 	}
 
-	tokenname := DecodeGetName(os.Getenv(publickeykatalogkemanan), header)
-	tokenusername := DecodeGetUsername(os.Getenv(publickeykatalogkemanan), header)
-	tokenrole := DecodeGetRole(os.Getenv(publickeykatalogkemanan), header)
+	tokenusername := DecodeGetUsername(os.Getenv(publickey), header)
+	tokenrole := DecodeGetRole(os.Getenv(publickey), header)
+	tokennik := DecodeGetNIK(os.Getenv(publickey), header)
 
 	auth.Username = tokenusername
 
-	if tokenname == "" || tokenusername == "" || tokenrole == "" {
+	if tokenusername == "" || tokenrole == "" {
 		response.Message = "Hasil decode tidak ditemukan"
 		return GCFReturnStruct(response)
 	}
 
-	if !UsernameExists(mongoenvkatalogfilm, dbname, auth) {
+	if !UsernameExists(mongoenv, dbname, auth) {
 		response.Message = "Akun tidak ditemukan"
 		return GCFReturnStruct(response)
 	}
 
 	response.Message = "Berhasil decode token"
 	response.Status = true
-	response.Data.No_whatsapp = tokenname
 	response.Data.Username = tokenusername
 	response.Data.Role = tokenrole
+	response.Data.NIK = tokennik
 
 	return GCFReturnStruct(response)
 }
 
-func Registrasi(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func Registrasi(mongoenv, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
-	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	mconn := SetConnection(mongoenv, dbname)
 	var user User
 	err := json.NewDecoder(r.Body).Decode(&user)
 
@@ -54,7 +54,7 @@ func Registrasi(mongoenvkatalogfilm, dbname, collname string, r *http.Request) s
 		return GCFReturnStruct(response)
 	}
 
-	if UsernameExists(mongoenvkatalogfilm, dbname, user) {
+	if UsernameExists(mongoenv, dbname, user) {
 		response.Message = "Username telah dipakai"
 		return GCFReturnStruct(response)
 	}
@@ -74,10 +74,10 @@ func Registrasi(mongoenvkatalogfilm, dbname, collname string, r *http.Request) s
 	return GCFReturnStruct(response)
 }
 
-func Login(privatekeykatalogkemanan, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func Login(privatekey, mongoenv, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
-	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	mconn := SetConnection(mongoenv, dbname)
 	var user User
 	err := json.NewDecoder(r.Body).Decode(&user)
 
@@ -86,7 +86,7 @@ func Login(privatekeykatalogkemanan, mongoenvkatalogfilm, dbname, collname strin
 		return GCFReturnStruct(response)
 	}
 
-	if !UsernameExists(mongoenvkatalogfilm, dbname, user) {
+	if !UsernameExists(mongoenv, dbname, user) {
 		response.Message = "Akun tidak ditemukan"
 		return GCFReturnStruct(response)
 	}
@@ -98,7 +98,7 @@ func Login(privatekeykatalogkemanan, mongoenvkatalogfilm, dbname, collname strin
 
 	auth := FindUser(mconn, collname, user)
 
-	tokenstring, tokenerr := Encode(auth.No_whatsapp, auth.Username, auth.Role, os.Getenv(privatekeykatalogkemanan))
+	tokenstring, tokenerr := Encode(auth.Username, auth.Role, auth.NIK, os.Getenv(privatekey))
 	if tokenerr != nil {
 		response.Message = "Gagal encode token: " + tokenerr.Error()
 		return GCFReturnStruct(response)
@@ -128,11 +128,10 @@ func TambahForm(publickey, mongoenv, dbname, collname string, r *http.Request) s
 		response.Message = "Header login tidak ditemukan"
 		return GCFReturnStruct(response)
 	}
-	tokenname := DecodeGetName(os.Getenv(publickey), header)
 	tokenusername := DecodeGetUsername(os.Getenv(publickey), header)
 	tokenrole := DecodeGetRole(os.Getenv(publickey), header)
 
-	if tokenusername == "" || tokenrole == "" || tokenname == "" {
+	if tokenusername == "" || tokenrole == "" {
 		response.Message = "Hasil decode tidak ditemukan"
 		return GCFReturnStruct(response)
 	}
@@ -187,7 +186,43 @@ func AmbilSemuaForm(publickey, mongoenv, dbname, collname string, r *http.Reques
 	return GCFReturnStruct(dataform)
 }
 
-func AmbilSatuForm(publickey, mongoenv, dbname, collname string, r *http.Request) string {
+func AmbilSatuFormDosen(publickey, mongoenv, dbname, collname string, r *http.Request) string {
+	var response Pesan
+	response.Status = false
+	mconn := SetConnection(mongoenv, dbname)
+	var dataform FormInput
+
+	header := r.Header.Get("token")
+	if header == "" {
+		response.Message = "Header login tidak ditemukan"
+		return GCFReturnStruct(response)
+	}
+
+	tokenusername := DecodeGetUsername(os.Getenv(publickey), header)
+	tokenrole := DecodeGetRole(os.Getenv(publickey), header)
+	tokennik := DecodeGetNIK(os.Getenv(publickey), header)
+
+	if tokenusername == "" || tokenrole == "" {
+		response.Message = "Hasil decode tidak ditemukan"
+		return GCFReturnStruct(response)
+	}
+
+	if !UsernameExists(mongoenv, dbname, User{Username: tokenusername}) {
+		response.Message = "Akun tidak ditemukan"
+		return GCFReturnStruct(response)
+	}
+
+	if tokenrole != "admin" && tokenrole != "dosen" {
+		response.Message = "Anda tidak memiliki akses"
+		return GCFReturnStruct(response)
+	}
+
+	dataform.NIK = tokennik
+	satuform := FindForm(mconn, collname, dataform)
+	return GCFReturnStruct(satuform)
+}
+
+func AmbilSatuFormAdmin(publickey, mongoenv, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenv, dbname)
@@ -244,11 +279,10 @@ func EditForm(publickey, mongoenv, dbname, collname string, r *http.Request) str
 		response.Message = "Header login tidak ditemukan"
 		return GCFReturnStruct(response)
 	}
-	tokenname := DecodeGetName(os.Getenv(publickey), header)
 	tokenusername := DecodeGetUsername(os.Getenv(publickey), header)
 	tokenrole := DecodeGetRole(os.Getenv(publickey), header)
 
-	if tokenusername == "" || tokenrole == "" || tokenname == "" {
+	if tokenusername == "" || tokenrole == "" {
 		response.Message = "Hasil decode tidak ditemukan"
 		return GCFReturnStruct(response)
 	}
@@ -286,12 +320,11 @@ func HapusForm(publickey, mongoenv, dbname, collname string, r *http.Request) st
 		response.Message = "Header login tidak ditemukan"
 		return GCFReturnStruct(response)
 	}
-	tokenname := DecodeGetName(os.Getenv(publickey), header)
 
 	tokenusername := DecodeGetUsername(os.Getenv(publickey), header)
 	tokenrole := DecodeGetRole(os.Getenv(publickey), header)
 
-	if tokenusername == "" || tokenrole == "" || tokenname == "" {
+	if tokenusername == "" || tokenrole == "" {
 		response.Message = "Hasil decode tidak ditemukan"
 		return GCFReturnStruct(response)
 	}

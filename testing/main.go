@@ -46,6 +46,7 @@ func LoginAPI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, peda.Login("privatekey", "mongoenv", "sistemkeamanan", "user", r))
 }
+
 func TambahFormAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -58,7 +59,8 @@ func TambahFormAPI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, peda.TambahForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
 }
-func HapusFormAPI(w http.ResponseWriter, r *http.Request) {
+
+func AmbilSemuaFormAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
@@ -68,7 +70,33 @@ func HapusFormAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, peda.HapusForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
+	fmt.Fprintf(w, peda.AmbilSemuaForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
+}
+
+func AmbilSatuFormDosenAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	fmt.Fprintf(w, peda.AmbilSatuFormDosen("publickey", "mongoenv", "sistemkeamanan", "form", r))
+}
+
+func AmbilSatuFormAdminAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	fmt.Fprintf(w, peda.AmbilSatuFormAdmin("publickey", "mongoenv", "sistemkeamanan", "form", r))
 }
 
 func UpdateFormAPI(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +112,7 @@ func UpdateFormAPI(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, peda.EditForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
 }
 
-func GetAllform(w http.ResponseWriter, r *http.Request) {
+func HapusFormAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
@@ -94,20 +122,7 @@ func GetAllform(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, peda.AmbilSemuaForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
-}
-
-func GetOneform(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodOptions {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
-		w.Header().Set("Access-Control-Max-Age", "3600")
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, peda.AmbilSatuForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
+	fmt.Fprintf(w, peda.HapusForm("publickey", "mongoenv", "sistemkeamanan", "form", r))
 }
 
 func handlerRequests() {
@@ -116,10 +131,11 @@ func handlerRequests() {
 	http.HandleFunc("/LoginAPI", LoginAPI)
 
 	http.HandleFunc("/TambahFormAPI", TambahFormAPI)
-	http.HandleFunc("/HapusFormAPI", HapusFormAPI)
+	http.HandleFunc("/AmbilSemuaFormAPI", AmbilSemuaFormAPI)
+	http.HandleFunc("/AmbilSatuFormDosenAPI", AmbilSatuFormDosenAPI)
+	http.HandleFunc("/AmbilSatuFormAdminAPI", AmbilSatuFormAdminAPI)
 	http.HandleFunc("/UpdateFormAPI", UpdateFormAPI)
-	http.HandleFunc("/GetAllform", GetAllform)
-	http.HandleFunc("/GetOneform", GetOneform)
+	http.HandleFunc("/HapusFormAPI", HapusFormAPI)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 

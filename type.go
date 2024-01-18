@@ -13,9 +13,9 @@ type Pesan struct {
 type CredentialUser struct {
 	Status bool `json:"status" bson:"status"`
 	Data   struct {
-		No_whatsapp string `json:"no_whatsapp" bson:"no_whatsapp"`
-		Username    string `json:"username" bson:"username"`
-		Role        string `json:"role" bson:"role"`
+		Username string `json:"username" bson:"username"`
+		Role     string `json:"role" bson:"role"`
+		NIK      string `json:"nik" bson:"nik"`
 	} `json:"data" bson:"data"`
 	Message string `json:"message,omitempty" bson:"message,omitempty"`
 }
@@ -28,6 +28,7 @@ type User struct {
 	Private     string `json:"private,omitempty" bson:"private,omitempty"`
 	Publick     string `json:"publick,omitempty" bson:"publick,omitempty"`
 	No_whatsapp string `json:"no_whatsapp,omitempty" bson:"no_whatsapp,omitempty"`
+	NIK         string `json:"nik,omitempty" bson:"nik,omitempty"`
 }
 
 type UserToken struct {
@@ -35,12 +36,12 @@ type UserToken struct {
 }
 
 type Payload struct {
-	No_whatsapp string    `json:"no_whatsapp"`
-	Username    string    `json:"username"`
-	Role        string    `json:"role"`
-	Exp         time.Time `json:"exp"`
-	Iat         time.Time `json:"iat"`
-	Nbf         time.Time `json:"nbf"`
+	NIK      string    `json:"nik"`
+	Username string    `json:"username"`
+	Role     string    `json:"role"`
+	Exp      time.Time `json:"exp"`
+	Iat      time.Time `json:"iat"`
+	Nbf      time.Time `json:"nbf"`
 }
 
 type Credential struct {

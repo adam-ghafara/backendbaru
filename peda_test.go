@@ -27,13 +27,13 @@ func TestEncode(t *testing.T) {
 
 func TestDecode(t *testing.T) {
 	pay, err := Decode(publickeykatalogfilm, encode)
-	no_whatsapp := DecodeGetName(publickeykatalogfilm, encode)
 	username := DecodeGetUsername(publickeykatalogfilm, encode)
 	role := DecodeGetRole(publickeykatalogfilm, encode)
+	nik := DecodeGetNIK(publickeykatalogfilm, encode)
 
-	fmt.Println("no_whatsapp :", no_whatsapp)
 	fmt.Println("username :", username)
 	fmt.Println("role :", role)
+	fmt.Println("nik :", nik)
 	fmt.Println("err : ", err)
 	fmt.Println("payload : ", pay)
 }

@@ -53,14 +53,14 @@ func GenerateKey() (privatekey, publickey string) {
 	return privatekey, publickey
 }
 
-func Encode(no_whatsapp, username, role, privatekey string) (string, error) {
+func Encode(username, role, nik, privatekey string) (string, error) {
 	token := paseto.NewToken()
 	token.SetIssuedAt(time.Now())
 	token.SetNotBefore(time.Now())
 	token.SetExpiration(time.Now().Add(2 * time.Hour))
-	token.SetString("no_whatsapp", no_whatsapp)
 	token.SetString("username", username)
 	token.SetString("role", role)
+	token.SetString("nik", nik)
 	key, err := paseto.NewV4AsymmetricSecretKeyFromHex(privatekey)
 	return token.V4Sign(key, nil), err
 }
@@ -89,14 +89,6 @@ func Decode(publickey, tokenstr string) (payload Payload, err error) {
 	return payload, nil
 }
 
-func DecodeGetName(publickey string, tokenstring string) string {
-	payload, err := Decode(publickey, tokenstring)
-	if err != nil {
-		fmt.Println("Decode DecodeGetId : ", err)
-	}
-	return payload.No_whatsapp
-}
-
 func DecodeGetUsername(publickey string, tokenstring string) string {
 	payload, err := Decode(publickey, tokenstring)
 	if err != nil {
@@ -111,4 +103,12 @@ func DecodeGetRole(publickey string, tokenstring string) string {
 		fmt.Println("Decode DecodeGetId : ", err)
 	}
 	return payload.Role
+}
+
+func DecodeGetNIK(publickey string, tokenstring string) string {
+	payload, err := Decode(publickey, tokenstring)
+	if err != nil {
+		fmt.Println("Decode DecodeGetId : ", err)
+	}
+	return payload.NIK
 }
