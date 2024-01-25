@@ -96,3 +96,7 @@ type SuratKerja struct {
 	Keterangan_Kerja    string `json:"keterangan_kerja" bson:"keterangan_kerja"`
 	Kuasa_Kerja         string `json:"kuasa_kerja" bson:"kuasa_kerja"`
 }
+
+type Base64Encoded struct {
+	EncodeData FormInput
+}

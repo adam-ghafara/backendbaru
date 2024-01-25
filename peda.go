@@ -1,6 +1,8 @@
 package peda
 
 import (
+	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"os"
@@ -342,6 +344,59 @@ func HapusForm(publickey, mongoenv, dbname, collname string, r *http.Request) st
 	DeleteForm(mconn, collname, dataform)
 	response.Status = true
 	response.Message = "Berhasil hapus data"
+
+	return GCFReturnStruct(response)
+}
+
+// Dari tim Keamanan
+
+func Base64Encode(publickeykatalogkemanan, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	var response Pesan
+	response.Status = false
+	var encryptdata FormInput
+	var buf bytes.Buffer
+	err := json.NewEncoder(&buf).Encode(&encryptdata)
+
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return GCFReturnStruct(response)
+	}
+	encrypt := base64.StdEncoding.EncodeToString(buf.Bytes())
+	response.Status = true
+	response.Message = "Berhasil Encoding data"
+	response.Data = encrypt
+
+	return GCFReturnStruct(response)
+}
+
+func Encrypt(publickeykatalogkemanan, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	var response Pesan
+	response.Status = false
+	var encrypting FormInput
+	err := json.NewDecoder(r.Body).Decode(&encrypting)
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return GCFReturnStruct(response)
+	}
+	encrypt := Base64Encode(publickeykatalogkemanan, mongoenvkatalogfilm, dbname, collname, r)
+	response.Status = true
+	response.Message = "Berhasil encrypt data"
+	response.Data = encrypt
+
+	return GCFReturnStruct(response)
+}
+
+func Decrypt(publickeykatalogkemanan, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	var response Pesan
+	response.Status = false
+	var decrypting FormInput
+	err := json.NewDecoder(r.Body).Decode(&decrypting)
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return GCFReturnStruct(response)
+	}
+	response.Status = true
+	response.Message = "Berhasil decrypt data"
 
 	return GCFReturnStruct(response)
 }
