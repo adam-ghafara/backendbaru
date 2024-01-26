@@ -119,6 +119,7 @@ func TambahForm(publickey, mongoenv, dbname, collname string, r *http.Request) s
 	mconn := SetConnection(mongoenv, dbname)
 	var dataform FormInput
 	err := json.NewDecoder(r.Body).Decode(&dataform)
+	var buf bytes.Buffer
 
 	if err != nil {
 		response.Message = "Error parsing application/json: " + err.Error()
@@ -148,6 +149,12 @@ func TambahForm(publickey, mongoenv, dbname, collname string, r *http.Request) s
 		return GCFReturnStruct(response)
 	}
 
+	dataform.NIK = base64.StdEncoding.EncodeToString(buf.Bytes())
+	dataform.NIK, err = HashData(dataform.NIK)
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return GCFReturnStruct(response)
+	}
 	InsertForm(mconn, collname, dataform)
 	response.Status = true
 	response.Message = "Berhasil input data"
